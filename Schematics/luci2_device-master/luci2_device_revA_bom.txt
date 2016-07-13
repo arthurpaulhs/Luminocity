@@ -1,0 +1,24 @@
+Partlist exported from C:/Users/tritronik/Documents/GitHub/luminocity2/luci2_boards/luci2_device/luci2_device_revA.sch at 15/04/2016 15:17:38
+
+Qty Value            
+4   Port biru 2 pin  
+1   Port biru 3 pin  
+1   PB Reset		 
+1   1N4004           
+1   2N3904-MMBT SOT23
+1   74HC4053D AN-MUX   
+2   ACS712           
+1   Blue LED	0805        
+2   C100nF		0805    
+1   C10uF		0805        
+2   C1nF		0805        
+1   C22uF		0805                                 
+1   IRF9540          
+1   LD117AS50TR SOT 223 
+2   R10K		0805        
+3   R1K			0805        
+3   R2K			0805        
+4   R330		0805        
+2   Red LED		0805        
+1   White LED	0805        
+2   XBEE-PRO	pin               

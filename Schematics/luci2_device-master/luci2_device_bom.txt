@@ -1,0 +1,24 @@
+Partlist exported from C:/Users/tritronik/Documents/GitHub/luminocity2/luci2_boards/luci2_device/luci2_device.sch at 10/03/2016 10:14:19
+
+Qty Value             Device            Package           Parts                                Description                            
+3                     AK300/2           AK300/2           LOAD_LAMP_DRIVER, PORT_VAC, PORT_VDC CONNECTOR                              
+1                     AK300/4           AK300/4           SENSOR1                              CONNECTOR                              
+1                     HEADER-1X2ROUND   1X02_ROUND        JP1                                  PIN HEADER                             
+2                     HEADER-1X3ROUND   1X03_ROUND        ARDU_DBG, ESP-GPIO0                  PIN HEADER                             
+1                     HEADER-1X5ROUND   1X05_ROUND        ESP-EXT                              PIN HEADER                             
+1                     TAC_SWITCHPTH     TACTILE-PTH       S1                                   Momentary Switch                       
+1   1N4004            1N4004            DO41-10           D1                                   DIODE                                  
+1   2N3904-MMBT       2N3904-MMBT       SOT23             Q2                                   NPN TRANSISTOR                         
+1   ARDUINO_PRO_MICRO ARDUINO_PRO_MICRO ARDUINO_PRO_MICRO U$1                                                                         
+1   Blue              LEDCHIPLED_0805   CHIPLED_0805      LED2                                 LED                                    
+2   DCDCMODULE_SMALL  DCDCMODULE_SMALL  DCDCMODULE-SMALL  U$2, U$4                                                                    
+1   ESP07-16PIN       ESP07-16PIN       ESP07-16PIN       U$5                                  ESP8266 Wifi module 07 - 16 pins       
+1   HLK-PM01          HLK-PM01          HLK-PM01          U$3                                                                         
+1   IRF9540           PMOSFET_PTO220BV  TO220BV           Q1                                   Power MOSFET P-Channel                 
+2   R10K              R-EU_M0805        M0805             R1, R2                               RESISTOR, European symbol              
+2   R1K               R-EU_M0805        M0805             R5, R15                              RESISTOR, European symbol              
+2   R2K               R-EU_M0805        M0805             R6, R16                              RESISTOR, European symbol              
+2   R330              R-EU_M0805        M0805             R3, R4                               RESISTOR, European symbol              
+1   Red               LEDCHIPLED_0805   CHIPLED_0805      LED1                                 LED                                    
+1   XBEE-PRO          XBEE-PRO          XBEE-PRO          XB1                                  XBee (TM) /XBee-PRO(TM) OEM RF Modules 
+8   var               R-EU_M0805        M0805             R7, R8, R9, R10, R11, R12, R13, R14  RESISTOR, European symbol              
