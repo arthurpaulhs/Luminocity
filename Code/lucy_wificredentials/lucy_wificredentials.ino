@@ -153,6 +153,11 @@ void handleSetAccessPoint() {
     }
     WiFi.mode(WIFI_AP_STA);
     WiFi.begin(qsid.c_str(), qpass.c_str());
+    content = "<!DOCTYPE HTML>\n<html>";
+    content += "Connection to AP ";
+    content += qsid;
+    content += ", succedded.</html>";
+    delay(5000);
     if (WiFi.status() == WL_CONNECTED) {
       Serial1.println();
       Serial1.println("WiFi connected");
@@ -160,13 +165,7 @@ void handleSetAccessPoint() {
       Serial1.println(WiFi.localIP());
       Serial1.print("SoftAP IP: ");
       Serial1.println(WiFi.softAPIP());
-      delay(3000);
-      abort();
     }
-    content = "<!DOCTYPE HTML>\n<html>";
-    content += "Connection to AP ";
-    content += qsid;
-    content += ", succedded.</html>";
   } else {
     content = "<!DOCTYPE HTML><html>";
     content += "Error, no ssid or password set?</html>";
@@ -207,7 +206,7 @@ void setup() {
   pinMode(ledPin1, OUTPUT);
   pinMode(ledPin2, OUTPUT);
   Serial1.begin(115200);
-  WiFi.mode(WIFI_STA);  // Assume we've already been configured
+  WiFi.mode(WIFI_STA);
   if (!testWifi()) {
     setupAccessPoint(); // No WiFi yet, enter configuration mode
   }
