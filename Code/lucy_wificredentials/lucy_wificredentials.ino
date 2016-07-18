@@ -11,6 +11,7 @@ const char* ssid = "esparthur";
 const char* passphrase = "seek9cat";
 String st;
 String content;
+bool mark = true;
 
 // initialize led pin
 int ledPin1 = 14;
@@ -42,6 +43,7 @@ bool testWifi(void) {
     c++;
   }
   Serial1.println();
+  Serial1.println();
   Serial1.println("Connection timed out, opening AP");
   return false;
 }
@@ -66,7 +68,7 @@ void setupAccessPoint(void) {
       Serial1.print(WiFi.SSID(i));
       Serial1.print(" (");
       Serial1.print(WiFi.RSSI(i));
-      Serial1.print(")");
+      Serial1.print(" dB)");
       Serial1.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
       delay(10);
     }
@@ -80,7 +82,7 @@ void setupAccessPoint(void) {
     st += WiFi.SSID(i);
     st += " (";
     st += WiFi.RSSI(i);
-    st += ")";
+    st += " dB)";
     st += (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*";
     st += "</li>";
   }
@@ -102,7 +104,7 @@ void launchWeb(int webservertype) {
   Serial1.print("Local IP: ");
   Serial1.println(WiFi.localIP());
   Serial1.print("SoftAP IP: ");
-  Serial1.println(WiFi.softAPIP());
+  Serial1.print(WiFi.softAPIP());
 }
 
 void setupWebServerHandlers(int webservertype)
@@ -153,19 +155,11 @@ void handleSetAccessPoint() {
     }
     WiFi.mode(WIFI_AP_STA);
     WiFi.begin(qsid.c_str(), qpass.c_str());
+    delay(100);
     content = "<!DOCTYPE HTML>\n<html>";
     content += "Connection to AP ";
     content += qsid;
     content += ", succedded.</html>";
-    delay(5000);
-    if (WiFi.status() == WL_CONNECTED) {
-      Serial1.println();
-      Serial1.println("WiFi connected");
-      Serial1.print("Local IP: ");
-      Serial1.println(WiFi.localIP());
-      Serial1.print("SoftAP IP: ");
-      Serial1.println(WiFi.softAPIP());
-    }
   } else {
     content = "<!DOCTYPE HTML><html>";
     content += "Error, no ssid or password set?</html>";
@@ -210,19 +204,22 @@ void setup() {
   if (!testWifi()) {
     setupAccessPoint(); // No WiFi yet, enter configuration mode
   }
-  else{
-    Serial1.println();
-    Serial1.println("WiFi connected");
-    Serial1.print("Local IP: ");
-    Serial1.println(WiFi.localIP());
-    Serial1.print("SoftAP IP: ");
-    Serial1.println(WiFi.softAPIP());
-  }
 }
 
 void loop() {
   server.handleClient(); 
   if (WiFi.status() == WL_CONNECTED){
+    //notify user if wifi has been connected
+    if (mark == true){
+      Serial1.println();
+      Serial1.println();
+      Serial1.println("WiFi connected");
+      Serial1.print("Local IP: ");
+      Serial1.println(WiFi.localIP());
+      Serial1.print("SoftAP IP: ");
+      Serial1.println(WiFi.softAPIP());
+      mark = false;
+      }
     digitalWrite(ledPin1,LOW);
     digitalWrite(ledPin2,HIGH);
     delay(250);
