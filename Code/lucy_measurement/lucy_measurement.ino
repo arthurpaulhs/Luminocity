@@ -8,7 +8,7 @@ enum {
 
 ESP8266WebServer server(80);
 // soft ap ssid and pass
-const char* ssid = "esparthur";  
+const char* ssid = "ESP_ARTHUR";  
 const char* passphrase = "seek9cat";
 
 // broker information
@@ -139,17 +139,21 @@ void handleDisplayAccessPoints() {
   uint8_t mac[6];
   WiFi.macAddress(mac);
   String macStr = macToStr(mac);
-  content = "<!DOCTYPE HTML>\n<html>Hello from ";
+  content = "<!DOCTYPE HTML>\n<html><h3>CREDENTIALS CONFIGURATION OF ";
   content += ssid;
-  content += " at ";
+  content += "<br>(";
   content += ipStr;
-  content += " (";
+  content += " / ";
   content += macStr;
-  content += ")";
+  content += ")</h3>";
   content += "<p>";
+  content += "Available networks: ";
   content += st;
-  content += "<p><form method='get' action='setap'><label>SSID: </label>";
-  content += "<input name='ssid' length=32><input name='pass' length=64><input type='submit'></form>";
+  content += "<p>Please enter credentials information on the following fields. <br>";
+  content += "<form method='get' action='setap'>";
+  content += "SSID: <input title='Please enter SSID from above list' input name='ssid' placeholder='SSID' length=32>";
+  content += " Password: <input type='password' input title='Please enter your password' input name='pass' placeholder='PASSWORD' length=64><p>";
+  content += "<button type='submit'>Save</button></form>";
   content += "<p>We will attempt to connect to the selected AP.";
   content += "</html>";
   server.send(200, "text/html", content);
@@ -174,9 +178,9 @@ void handleSetAccessPoint() {
     WiFi.begin(qsid.c_str(), qpass.c_str());
     delay(100);
     content = "<!DOCTYPE HTML>\n<html>";
-    content += "Connection to AP ";
+    content += "Connection to access point ";
     content += qsid;
-    content += ", succedded.</html>";
+    content += " succeeded.</html>";
   } else {
     content = "<!DOCTYPE HTML><html>";
     content += "Error, no ssid or password set?</html>";
