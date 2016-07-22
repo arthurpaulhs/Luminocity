@@ -24,8 +24,14 @@ int sensor_esp = A0;
 //variable initialization
 float current = 0;
 float voltage = 0;
+float buff = 0;
+float var = 0;
 int voltage_c = 0;
 int voltage_v = 0;
+int d1, d2 = 0;
+float f1 = 0;
+
+
 char msg[50];
 String st;
 String content;
@@ -253,15 +259,20 @@ void reconnect() {
 void battery_current(){ //battery current measurement
   //sensor select
   digitalWrite(sel_sensor_2, HIGH);
-  delay(50);
   digitalWrite(sel_sensor_1, HIGH);
   
   //processing data
   voltage_c = analogRead(sensor_esp);
-  current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500);    
+  current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500); 
+  //print data to serial
+  Serial1.print(current);
+  Serial1.println(" mA");   
+  //convert float value to 2 value separated by mantissa
+  d1 = current;
+  f1 = current - d1;
+  d2 = (int)(f1*100);
   //publish data
-  Serial1.println(current);
-  snprintf (msg, 75, "Battery current = %.2f mA", current);
+  snprintf(msg,75,"Lamp current = %d.%02d V", d1, d2);
   client.publish("luminocity/measurement_test/battery_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
@@ -272,15 +283,20 @@ void battery_current(){ //battery current measurement
 void lamp_current(){ //lamp current measurement
   //sensor select
   digitalWrite(sel_sensor_2, LOW);
-  delay(50);
   digitalWrite(sel_sensor_1, HIGH);
   
   //processing data
   voltage_c = analogRead(sensor_esp);
   current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500);
+  //print data to serial
+  Serial1.print(current);
+  Serial1.println(" mA");
+  //convert float value to 2 value separated by mantissa
+  d1 = current;
+  f1 = current - d1;
+  d2 = (int)(f1*100);
   //publish data
-  Serial1.println(current);
-  snprintf (msg, 75, "Lamp current = %.2f mA", current);
+  snprintf(msg,75,"Lamp current = %d.%02d V", d1, d2);
   client.publish("luminocity/measurement_test/lamp_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
@@ -290,15 +306,22 @@ void lamp_current(){ //lamp current measurement
 void battery_voltage(){ //battery voltage measurement
   //sensor select
   digitalWrite(sel_sensor_2, HIGH);
-  delay(50);
   digitalWrite(sel_sensor_1, LOW);
   
   //processing data
   voltage_v = analogRead(sensor_esp);
-  voltage = ((((voltage_v *(1.0/1023.0))*10)/11)*48);   
+  buff = voltage_v *(1.05/1023.0);
+  var = (buff*2.1)/3.0; 
+  voltage = ((buff+var)*48); //voltage = ((voltage_v *(1.0/1023.0))*48); 
+  //print data to serial
+  Serial1.print(voltage);
+  Serial1.println(" V");
+  //convert float value to 2 value separated by mantissa
+  d1 = voltage;
+  f1 = voltage - d1;
+  d2 = (int)(f1*100);
   //publish data
-  Serial1.println(voltage);
-  snprintf (msg, 75, "Battery voltage = %5.2f V", voltage);
+  snprintf(msg,75,"Battery voltage = %d.%02d V", d1, d2);
   client.publish("luminocity/measurement_test/battery_voltage_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, LOW);
@@ -308,15 +331,22 @@ void battery_voltage(){ //battery voltage measurement
 void solar_panel_voltage(){ //solar panel voltage measurement
   //sensor select
   digitalWrite(sel_sensor_2, LOW);
-  delay(50);
   digitalWrite(sel_sensor_1, LOW);
   
   //processing data
   voltage_v = analogRead(sensor_esp);
-  voltage = ((((voltage_v *(1.0/1023.0))*10)/11)*48);   
+  buff = voltage_v *(1.05/1023.0);
+  var = (buff*2.1)/3.0; 
+  voltage = ((buff+var)*48); //voltage = ((voltage_v *(1.0/1023.0))*48); 
+  //print data to serial
+  Serial1.print(voltage);
+  Serial1.println(" V");
+  //convert float value to 2 value separated by mantissa
+  d1 = voltage;
+  f1 = voltage - d1;
+  d2 = (int)(f1*100);
   //publish data
-  Serial1.println(voltage);
-  snprintf (msg, 75, "Solar panel voltage = %5.2f V", voltage);
+  snprintf(msg,75,"Solar panel voltage voltage = %d.%02d V", d1, d2);
   client.publish("luminocity/measurement_test/solar_panel_voltage_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, LOW);
@@ -362,13 +392,13 @@ void loop() {
     client.loop();
 
     //measurement process
-    battery_current();
-    delay(1000);
-    lamp_current();
-    delay(1000);
+    //battery_current();
+    //delay(2000);
+    //lamp_current();
+    //delay(2000);
     battery_voltage();
-    delay(1000);
+    delay(2000);
     solar_panel_voltage();
-    delay(1000);
+    delay(2000);
   }
 }
