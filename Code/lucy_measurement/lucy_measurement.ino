@@ -20,12 +20,16 @@ int ledPin2 = 16;
 int sel_sensor_1 = 5;
 int sel_sensor_2 = 4;
 int sensor_esp = A0;
+int ctrl_lamp = 12;
+int ctrl_charger = 13;
 
 //variable initialization
 float current = 0;
 float voltage = 0;
 float buff = 0;
 float var = 0;
+float offset_acs_battery = 2.544;
+float offset_acs_lamp = 2.500;
 int voltage_c = 0;
 int voltage_v = 0;
 int d1, d2 = 0;
@@ -260,43 +264,42 @@ void battery_current(){ //battery current measurement
   //sensor select
   digitalWrite(sel_sensor_2, HIGH);
   digitalWrite(sel_sensor_1, HIGH);
+  analogWrite(ctrl_lamp, 244);
   
   //processing data
   voltage_c = analogRead(sensor_esp);
-  current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500); 
+  buff = ((voltage_c *(1.05/1023.0))*5.95);
+  current = (((buff-offset_acs_battery)*1000)/185.0)*(-1000); //sensitivity 185 mV/A  
+  //convert float value to int
+  d1 = (int)current;
   //print data to serial
-  Serial1.print(current);
-  Serial1.println(" mA");   
-  //convert float value to 2 value separated by mantissa
-  d1 = current;
-  f1 = current - d1;
-  d2 = (int)(f1*100);
+  Serial1.print(d1);
+  Serial1.println(" mA");
   //publish data
-  snprintf(msg,75,"Lamp current = %d.%02d V", d1, d2);
+  snprintf(msg,75,"Battery current = %d mA", d1);
   client.publish("luminocity/measurement_test/battery_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
   digitalWrite(ledPin2, HIGH);
-  delay(250);
   }
 
 void lamp_current(){ //lamp current measurement
   //sensor select
   digitalWrite(sel_sensor_2, LOW);
   digitalWrite(sel_sensor_1, HIGH);
+  analogWrite(ctrl_lamp, 0);
   
   //processing data
   voltage_c = analogRead(sensor_esp);
-  current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500);
+  buff = ((voltage_c *(1.05/1023.0))*5.96);
+  current = (((buff-offset_acs_lamp)*1000)/185.0)*1000; //sensitivity 185 mV/A
+  //convert float value to int
+  d1 = (int)current;
   //print data to serial
-  Serial1.print(current);
+  Serial1.print(d1);
   Serial1.println(" mA");
-  //convert float value to 2 value separated by mantissa
-  d1 = current;
-  f1 = current - d1;
-  d2 = (int)(f1*100);
   //publish data
-  snprintf(msg,75,"Lamp current = %d.%02d V", d1, d2);
+  snprintf(msg,75,"Lamp current = %d mA", d1);
   client.publish("luminocity/measurement_test/lamp_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
@@ -316,7 +319,7 @@ void battery_voltage(){ //battery voltage measurement
   //print data to serial
   Serial1.print(voltage);
   Serial1.println(" V");
-  //convert float value to 2 value separated by mantissa
+  //convert float value to 2 value separated by point
   d1 = voltage;
   f1 = voltage - d1;
   d2 = (int)(f1*100);
@@ -341,12 +344,12 @@ void solar_panel_voltage(){ //solar panel voltage measurement
   //print data to serial
   Serial1.print(voltage);
   Serial1.println(" V");
-  //convert float value to 2 value separated by mantissa
+  //convert float value to 2 value separated by point
   d1 = voltage;
   f1 = voltage - d1;
   d2 = (int)(f1*100);
   //publish data
-  snprintf(msg,75,"Solar panel voltage voltage = %d.%02d V", d1, d2);
+  snprintf(msg,75,"Solar panel voltage = %d.%02d V", d1, d2);
   client.publish("luminocity/measurement_test/solar_panel_voltage_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, LOW);
@@ -360,6 +363,8 @@ void setup() {
   pinMode(sel_sensor_1, OUTPUT);
   pinMode(sel_sensor_2, OUTPUT);
   pinMode(sensor_esp, INPUT);
+  pinMode(ctrl_lamp, OUTPUT);
+  pinMode(ctrl_charger, OUTPUT);
   
   Serial1.begin(115200);
   WiFi.mode(WIFI_STA);
@@ -392,13 +397,13 @@ void loop() {
     client.loop();
 
     //measurement process
-    //battery_current();
-    //delay(2000);
-    //lamp_current();
-    //delay(2000);
+    battery_current();
+    delay(500);
+    lamp_current();
+    delay(500);
     battery_voltage();
-    delay(2000);
+    delay(500);
     solar_panel_voltage();
-    delay(2000);
+    delay(500);
   }
 }
