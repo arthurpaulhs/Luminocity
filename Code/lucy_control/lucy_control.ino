@@ -32,8 +32,8 @@ float offset_acs_battery = 2.544;
 float offset_acs_lamp = 2.500;
 int voltage_c = 0;
 int voltage_v = 0;
+int d1, d2 = 0;
 int pwm_value = 0;
-char msg[50];
 String st;
 String content;
 bool mark = true;
@@ -284,7 +284,15 @@ void battery_current(){ //battery current measurement
   
   //processing data
   voltage_c = analogRead(sensor_esp);
+  buff = ((voltage_c *(1.05/1023.0))*5.95);
+  current = (((buff-offset_acs_battery)*1000)/185.0)*(-1000); //sensitivity 185 mV/A  
+  //convert float value to int
+  d1 = (int)current;
+  //print data to serial
+  Serial1.print(d1);
+  Serial1.println(" mA");
   //publish data
+  snprintf(msg,75,"Battery current = %d mA", d1);
   client.publish("luminocity/measurement_test/battery_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
@@ -296,8 +304,17 @@ void lamp_current(){ //lamp current measurement
   digitalWrite(sel_sensor_2, LOW);
   digitalWrite(sel_sensor_1, HIGH);
   
+//processing data
   voltage_c = analogRead(sensor_esp);
+  buff = ((voltage_c *(1.05/1023.0))*5.96);
+  current = (((buff-offset_acs_lamp)*1000)/185.0)*1000; //sensitivity 185 mV/A
+  //convert float value to int
+  d1 = (int)current;
+  //print data to serial
+  Serial1.print(d1);
+  Serial1.println(" mA");
   //publish data
+  snprintf(msg,75,"Lamp current = %d mA", d1);
   client.publish("luminocity/measurement_test/lamp_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
