@@ -26,6 +26,10 @@ int ctrl_charger = 13;
 //variable initialization
 float current = 0;
 float voltage = 0;
+float buff = 0;
+float var = 0;
+float offset_acs_battery = 2.544;
+float offset_acs_lamp = 2.500;
 int voltage_c = 0;
 int voltage_v = 0;
 int pwm_value = 0;
@@ -276,34 +280,24 @@ void charger_control(){ //charger control
 void battery_current(){ //battery current measurement
   //sensor select
   digitalWrite(sel_sensor_2, HIGH);
-  delay(50);
   digitalWrite(sel_sensor_1, HIGH);
   
   //processing data
   voltage_c = analogRead(sensor_esp);
-  current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500);    
   //publish data
-  Serial1.println(current);
-  snprintf (msg, 75, "Battery current = %.2f mA", current);
   client.publish("luminocity/measurement_test/battery_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);
   digitalWrite(ledPin2, HIGH);
-  delay(250);
   }
 
 void lamp_current(){ //lamp current measurement
   //sensor select
   digitalWrite(sel_sensor_2, LOW);
-  delay(50);
   digitalWrite(sel_sensor_1, HIGH);
   
-  //processing data
   voltage_c = analogRead(sensor_esp);
-  current = (((voltage_c *(1.0/1023.0))-(5.0/9.0))*67500);
   //publish data
-  Serial1.println(current);
-  snprintf (msg, 75, "Lamp current = %.2f mA", current);
   client.publish("luminocity/measurement_test/lamp_current_measurement", msg);
   //indicator show which measurement currently executed by microprocessor
   digitalWrite(ledPin1, HIGH);

@@ -34,8 +34,6 @@ int voltage_c = 0;
 int voltage_v = 0;
 int d1, d2 = 0;
 float f1 = 0;
-
-
 char msg[50];
 String st;
 String content;
