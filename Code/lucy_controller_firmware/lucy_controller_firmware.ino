@@ -33,6 +33,7 @@ float offset_acs_lamp = 2.500;
 int voltage_c = 0;
 int voltage_v = 0;
 int d1, d2 = 0;
+int pwm_value = 0;
 float f1 = 0;
 char msg[50];
 String st;
@@ -234,6 +235,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
     msg[i] = (char)payload[i];
   }
   Serial1.println();
+
+  //check if there are any update regarding control feature
+  if (strcmp(topic, "luminocity/test/ctrl_lamp") == 0)
+    lamp_control();
+  else if (strcmp(topic, "luminocity/test/ctrl_charger") == 0)
+    charger_control();
 }
 
 void reconnect() {
@@ -245,6 +252,9 @@ void reconnect() {
     if (client.connect("ESP8266_Luminocity")) {
       Serial1.println("Connected to server");
       Serial1.println();
+      // subscribe to topics
+      client.subscribe("luminocity/test/ctrl_lamp");
+      client.subscribe("luminocity/test/ctrl_charger");
     } 
     else {
       Serial1.println();
@@ -256,6 +266,16 @@ void reconnect() {
       delay(5000);
     }
   }
+}
+
+void lamp_control(){ //light intensity control
+  pwm_value = atoi(msg); //pwm values range from 0 to 1023 (10 bit DAC)
+  analogWrite(ctrl_lamp, pwm_value);
+}
+
+void charger_control(){ //charger control
+  pwm_value = atoi(msg); //pwm values range from 0 to 1023 (10 bit DAC)
+  analogWrite(ctrl_charger, pwm_value);
 }
 
 void battery_current(){ //battery current measurement
